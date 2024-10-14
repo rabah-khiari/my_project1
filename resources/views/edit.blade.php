@@ -3,7 +3,7 @@
 @section('content')
     <h1>c'est index creat bnjreee</h1>
 
-   <form action="" method="post">
+   <form action="" method="post" enctype="multipart/form-data">
     @csrf
     <div>
         <input type="text" name="title" value="{{old('title',$post->title)}} ">
@@ -14,7 +14,11 @@
     
     <input type="text" name="content" value="{{old('content',$post->content)}}  ">
     <input type="text" name="slug" value="{{old('slug',$post->slug)}} ">
-   
+
+    <div class="form-group" >
+        <label for="image">the New Image</label>
+        <input type="file" class="form-control" id="image" name="image" >
+    </div>
         
         <select class="form-select" id="category" name="category_id">  
             

@@ -12,8 +12,11 @@
             @foreach ($post->tags as $tag)
                 <div>{{$tag->name}}</div>
             @endforeach
+            
         @endif
+        <a href="{{ route('blog.update',['post'=>$post->id])}}">update</a>
         <a href="{{ route('blog.show',['post'=>$post->slug])}}">show</a>
+        
     @endforeach
     
     {{$posts->links()}}

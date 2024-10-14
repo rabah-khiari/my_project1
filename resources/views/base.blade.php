@@ -13,6 +13,7 @@
             @method('delete')
             @csrf
             <button type="submit" class="btn btn-primary">{{\Illuminate\Support\Facades\Auth::user()->name}}-logOut</button>
+            <a href="{{ route('blog.index')}}">blog</a>
         </form>
 
     @endauth

@@ -14,8 +14,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use Symfony\Component\Console\Input\Input;
+
 class BlogController extends Controller
 {
     public function index () {
@@ -62,39 +65,71 @@ class BlogController extends Controller
             'email'=>'rabah@gmail.com',
         'password'=>Hash::make('0000') ]);
         */
-        
+       
         $var= \App\Models\Post::with('tags','category')->paginate(3);
        return view('index', ['posts'=>$var]); 
 
     }
 
     public function create()  {
-        
-        return view('create');
+        return view('create',[
+
+            'categories'=>Category::select('id','name')->get(),
+            'tags'=>Tag::select('id','name')->get()]);
+
     }
     public function edit(Post $post) {
-        
-      
+
         return view('edit',['post'=>$post,
          'categories'=>Category::select('id','name')->get(),
         'tags'=>Tag::select('id','name')->get()]);
 
     }
+
     public function update(Post $post, BlogFilterRequest $request) {
         $post->title=$request->input('title');
-        $post->slug=$request->input('content');
-        $post->content=$request->input('slug');
+        $post->slug=$request->input('slug');
+        $post->content=$request->input('content');
         $post->category_id=$request->input('category_id');
         $post->tags()->sync( $request->input('tags'));
+
+        /** @var UploadedFile|null $image  */
+        $image=$request->validated('image');
+        
+        
+        if($image != null && !$image->getError()) #image est valid et n'est pas vide 
+        {
+            if($post->image) { # verify befor removing 
+                Storage::disk('public')->delete($post->image);
+                
+            }
+
+            $imagePath=$image->store('blog','public');# store the image on /public/blog/HashedID.jpg 
+            $post->image=$imagePath;
+
+        }
+        
         $post->save();
+       
         return redirect()->route('blog.show',['post'=>$post->slug])->with('success','updated with success');
     }
     public function store(BlogFilterRequest $request)  {
-        dd($request->validated());
+      
+        /** @var UploadedFile|null $image  */
+        $image=$request->validated('image');
+        
+        if($image != null && !$image->getError()) #image est valid et n'est pas vide 
+        {
+            $imagePath=$image->store('blog','public');# store the image on /public/blog/HashedID.jpg 
+        }
         $post = new \App\Models\Post(); #add new items 
         $post->title=$request->input('title');
-        $post->slug=$request->input('content');
-        $post->content=$request->input('slug');
+        $post->slug=$request->input('slug');
+        $post->category_id=$request->input('category_id');
+        $post->content=$request->input('content');
+        $post->image=$imagePath;
+        $post->save();
+        $post->tags()->sync( $request->input('tags'));
         $post->save();
         
         #dd($request->all());

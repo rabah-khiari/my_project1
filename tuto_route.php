@@ -3,11 +3,17 @@ to make vsCode good with php and laravel
     Ctrl + shift +x
     install :  PHP Intelephense , Laravel Blade Snippets , Laravel Extra Intellisense
 
-    first run : composer global require laravel/installer or  composer install or composer update 
     if u get the project from github u shold : cp .env.example .env
+    first run : composer global require laravel/installer or  composer install or composer update 
+   
+    generate the new key : php artisan key:generate  and php artisan config:clear 
+    GD extension in XAMPP : go to C:\xampp\php\php.ini and remove the ';' from  ;extension=gd
+
 start the server : php artisan serve 
 
-middle ware : https://www.youtube.com/watch?v=Gr1Mmb1KYA8
+Authentication middle ware  : https://www.youtube.com/watch?v=Gr1Mmb1KYA8
+link the storage to public/storage  : php artisan storage:link 
+
 <?php 
 #tuto ROUTE 
 

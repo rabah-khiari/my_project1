@@ -8,6 +8,9 @@
     @if (session('success'))
         {{session('success')}}
     @endif
+    @if($post->image)
+        <img src="/storage/{{$post->image}}" alt="">
+    @endif
  
         
     
