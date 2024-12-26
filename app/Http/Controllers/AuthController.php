@@ -6,6 +6,7 @@ use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -16,6 +17,12 @@ class AuthController extends Controller
     
     public function dologin(LoginRequest $request)
     {
+        // $user = new User();
+        // $user->password = Hash::make('1234');
+        // $user->email = 'ee@gmail.com';
+        // $user->name = 'rabah2';
+        // $user->save();
+        
         $credential=$request->validated();
         if(Auth::attempt($credential)){
             $request->session()->regenerate();
@@ -24,7 +31,7 @@ class AuthController extends Controller
 
         }
         return to_route('auth.login')->withErrors([
-            'email'=>'email est invalide'
+            'email'=>'email or password invalide'
         ]);
         
     }

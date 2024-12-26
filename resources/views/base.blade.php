@@ -20,11 +20,11 @@
     @guest
     <button type="submit" class="btn btn-black"><a href="{{route('auth.login')}}"> se connecter </a> </button>  
     @endguest
-<div class="container">
+
 
     @yield('content')
     @yield('test')
-</div>
+
 
 </body>
 </html>

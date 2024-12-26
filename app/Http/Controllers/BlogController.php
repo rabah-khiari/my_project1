@@ -78,6 +78,10 @@ class BlogController extends Controller
             'tags'=>Tag::select('id','name')->get()]);
 
     }
+    public function seats()  {
+        return view('seats');
+
+    }
     public function edit(Post $post) {
 
         return view('edit',['post'=>$post,

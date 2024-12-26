@@ -1,6 +1,8 @@
 @extends('base')
 @section('title','index one')
 @section('content')
+ <livewire:seat-reservation />
+ 
     <h1>c'est index blog bnjr</h1>
     <a href="{{ route('blog.create')}}">create</a>
         {{"bonjoooooooooorzaaa"}}

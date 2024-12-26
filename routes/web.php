@@ -13,6 +13,7 @@ Route::delete('/logout',[\App\Http\Controllers\AuthController::class,'logout'])-
 Route::prefix('/blog')->name('blog.')->controller(\App\Http\Controllers\BlogController::class)->group(function(){
     
     Route::get('/','index')->name('index');
+    Route::get('/seats','seats')->name('seats');
     Route::get('/create','create')->name('create')->middleware('Authenticate');
     Route::get('/{post}/edit','edit')->name('edit')->middleware('Authenticate');
     Route::post('/{post}/edit','update')->name('update')->middleware('Authenticate');
