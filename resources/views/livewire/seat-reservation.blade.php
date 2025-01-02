@@ -6,8 +6,6 @@
         use Illuminate\Support\Str;
         @endphp
 
-        
-
         <!-- Seating Area -->
         <div class="seating-area">
             @foreach (['A','B','C','D','E','F','G','H','I','J','K','L','M'] as $row)
@@ -47,12 +45,26 @@
             @foreach (['N','O'] as $row)
             <div class="seat-row">
                 @foreach ($seats as $seat)
+
                     @if (Str::startsWith($seat->seat_number, $row))
+                        @php
+                        $color="reserved";
+                        if($seat->state==Auth::id())
+                        {
+                            $color="reservedpending";
+                        }else {
+                            if (( (int)$seat->state ) > 0){
+                            $color="reservedpendingUsers";
+                            }
+                        }
+                        @endphp
+
                         <button 
                         onclick="confirmReservation({{ $seat->id_seat }}, this)"
-                        class="seat {{ !$seat->available ? 'reserved' : '' }} {{ str_ends_with($seat->seat_number, 'X') ? 'reservedEmpty' : '' }}" 
+                        class="seat {{ !$seat->available ? $color : '' }} {{ str_ends_with($seat->seat_number, 'X') ? 'reservedEmpty' : '' }}" 
                         wire:click="reserveSeat({{ $seat->id_seat }})"
-                        {{ str_ends_with($seat->seat_number, 'X') ? 'desible' : '' }}>
+                        {{ str_ends_with($seat->seat_number, 'X') ? 'desible' : '' }}
+                        >
                         {{ str_ends_with($seat->seat_number, 'X') ? ' ' : $seat->seat_number }}
                         </button>
                     @endif
@@ -67,12 +79,23 @@
             <div class="seat-row">
                 @foreach ($seats as $seat)
                     @if (Str::startsWith($seat->seat_number, $row))
-                        <button 
+                        @php
+                        $color="reserved";
+                        if($seat->state==Auth::id())
+                        {
+                            $color="reservedpending";
+                        }else {
+                            if (( (int)$seat->state ) > 0){
+                            $color="reservedpendingUsers";
+                            }
+                        }
+                        @endphp
+                       <button 
                         onclick="confirmReservation({{ $seat->id_seat }}, this)"
-                        class="seat {{ !$seat->available ? 'reserved' : '' }} {{ str_ends_with($seat->seat_number, 'X') ? 'reservedEmpty' : '' }}" 
+                        class="seat {{ !$seat->available ? $color : '' }} {{ str_ends_with($seat->seat_number, 'X') ? 'reservedEmpty' : '' }}" 
                         wire:click="reserveSeat({{ $seat->id_seat }})"
-                        {{ str_ends_with($seat->seat_number, 'X') ? 'desible' : '' }} 
-                        >
+                        {{ str_ends_with($seat->seat_number, 'X') ? 'desible' : '' }}
+                            >
                         {{ str_ends_with($seat->seat_number, 'X') ? ' ' : $seat->seat_number }}
                         </button>
                     @endif
@@ -96,19 +119,23 @@
     function confirmReservation(seatId, button) {
         // Show confirmation dialog
         const buttonText = button.textContent || button.innerText;
-        if (button.classList.contains('reserved') | button.classList.contains('reservedpendingUsers')  ) { 
-            //if the button(seat) is reserved  
+        //if the button(seat) is reserved  
+        // or if the other user book the seat , the current user cant reserve the seat for 10min 
+        if (button.classList.contains('reserved') || button.classList.contains('reservedpendingUsers')  ) { 
             event.preventDefault(); //block the event 
-            event.stopImmediatePropagation();
+            event.stopImmediatePropagation(); //block the event 
             
             }else{
-                    // Check if character is '' mean buttons that's not a seat 
+            // Check if character is '' mean buttons that's not a seat because i do show the seats as 
+            // matrice like 30x40 and desible the seats that are not in the real Stage
             if (button.innerText =='') {
-                event.preventDefault();
-                event.stopImmediatePropagation();
+                event.preventDefault();//block the event 
+                event.stopImmediatePropagation();//block the event 
+
             } else {// if the seat is available it gonna ask the user if he want to reserve it 
                 const confirmAction = confirm("Voulez-vous vraiment réserver ce siège?");
                 if (!confirmAction) {
+                    //block the event if the user click No 
                     event.preventDefault();
                     event.stopImmediatePropagation();
                 }

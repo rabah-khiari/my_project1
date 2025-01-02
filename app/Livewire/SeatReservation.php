@@ -60,9 +60,10 @@ class SeatReservation extends Component
        
         if ($seat && $seat->available) {
             // Reserve the seat by setting 'available' to false
-            $seat->available = false;
-            $seat->state=$user_id;
+            $seat->available = false; //reserve the seat 
+            $seat->state=$user_id; //save user id 
             $seat->save();
+            //create a reservation with the time to begin counting to 10min 
             $seat = Reservation::create([
                 'id_user' => $user_id,
                 'id_seat' => $seatId,
@@ -70,20 +71,23 @@ class SeatReservation extends Component
                 'status' => "pending"
             ]);
 
+            //verify if there is any seats exceed the 10min time to turn it available state 
             $this->freeReservedAfter10Min();
 
             // Refresh the seats data
             $this->seats = Seat::all();
 
         }else{
-            //mean if state ==0 -> there is no one take this seat or state== current user_id to liberer the seat 
+            //mean if state ==0 -> there is no one take this seat or if state== current user_id : the user can free the seat 
             if (!((int) $seat->state > 0) || $seat->state ==$user_id)
             {
                 $seat->available = true;
                 $seat->state=0;
                 $seat->save();
-                // Refresh the seats data
+               
+                //verify if there is any seats exceed the 10min time to turn it available state
                 $this->freeReservedAfter10Min();
+                // Refresh the seats data
                 $this->seats = Seat::all();
             }
             
