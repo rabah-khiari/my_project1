@@ -12,7 +12,9 @@ class SeatReservation extends Component
 {
     public $seats = []; // Holds all seats from the database
     public $reservedSeats = []; // Holds seat numbers that are reserved
-
+    public $Myresevation=[];
+    public $spectacleid;
+ 
     public function freeReservedAfter10Min() {
 
         $currentTimestamp = now()->timestamp - 1 * 60 ; // Current time in seconds 1 * 60 sec mean after 60 second will disapear 
@@ -31,15 +33,23 @@ class SeatReservation extends Component
             ]);
             $reservation->delete();
         }
+        $user_id= Auth::id();
+        $this->Myresevation = Reservation::where('id_user', $user_id)->with('seat')->get();
         
 
     }
-    public function mount()
+    public function mount($spectacleid)
     {
+        $this->spectacleid = $spectacleid;
+
         // Load all seats on component mount
+        
         $this->freeReservedAfter10Min();
-        $this->seats = Seat::all();
-        //dd($this->seats);
+        $this->seats = Seat::where('id_spectacle', $this->spectacleid)->get();
+        
+        $user_id= Auth::id();
+        $this->Myresevation = Reservation::where('id_user', $user_id)->with('seat')->get();
+        
     }
 
     public function reserveSeat($seatId)
@@ -75,7 +85,7 @@ class SeatReservation extends Component
             $this->freeReservedAfter10Min();
 
             // Refresh the seats data
-            $this->seats = Seat::all();
+            $this->seats = Seat::where('id_spectacle', $this->spectacleid)->get();
 
         }else{
             //mean if state ==0 -> there is no one take this seat or if state== current user_id : the user can free the seat 
@@ -84,14 +94,20 @@ class SeatReservation extends Component
                 $seat->available = true;
                 $seat->state=0;
                 $seat->save();
+
+                Reservation::where('id_seat', $seat->id_seat)->delete();
                
                 //verify if there is any seats exceed the 10min time to turn it available state
                 $this->freeReservedAfter10Min();
                 // Refresh the seats data
-                $this->seats = Seat::all();
+                $this->seats = Seat::where('id_spectacle', $this->spectacleid)->get();
             }
             
         }
+
+        //get the seats that are reserved by this user 
+        $this->Myresevation = Reservation::where('id_user', $user_id)->with('seat')->get();
+
     }
 
     public function render()

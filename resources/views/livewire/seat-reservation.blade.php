@@ -1,9 +1,70 @@
 <div>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
     <div class=" seat-reservation-container ">
+        <br>
+        
+
+
+        <!-- Button to Open the Modal -->
+<button   onclick="timeRefreching()" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+  <i class="fas fa-calendar-check"></i> Mes Reservations 
+  </button>
+
+  <button wire:click="freeReservedAfter10Min()" class="btn btn-secondary" >
+    <i class="fas fa-sync-alt"></i> Refresh
+  </button>
+
+  <!-- The Modal -->
+  <div class="modal" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title text-secondary">Mes Reservations</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+            
+            <h4>Mes Reservations
+                
+                @foreach ($Myresevation as $item)
+                
+                <div id="here" class="seat-timer" 
+                    data-reservation-time="{{$item->reservation_date}}" 
+                    data-seat-number="{{ $item->id_seat }}">
+                    <span class="text-secondary">Siege: {{ $item->seat->seat_number }} </span>
+                    <span class="text-danger timer"></span>
+                </div>
+                    
+                @endforeach 
+
+                
+            </h4>
+    
+            
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+        
+
         <!-- Screen Label -->
-        <h2 class="screen-label">Gradin</h2>
+        <h2 class="screen-label">Gradin </h2>
+        
+        
         @php
         use Illuminate\Support\Str;
+        
         @endphp
 
         <!-- Seating Area -->
@@ -36,6 +97,7 @@
                     @endif
                     
                 @endforeach
+                
             </div>
             @endforeach
         </div>
@@ -110,13 +172,100 @@
         <h1 class="text-body">.</h1>
         <h1 class="text-body">.</h1>
         <h1 class="text-body">.</h1>
+        
 
     </div>
-
+    
+<br>
+<div class="container d-flex justify-content-center">
+    <div class="row justify-content-center gap-4">
+      <div class="col-lg-3 col-md-5 col-sm-10">
+        <a href="https://example.com" target="_blank" class="card-link">
+          <div class="card">
+            <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/041.webp" class="card-img-top" alt="Hollywood Sign on The Hill" />
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">
+                This is a longer card with supporting text below as a natural lead-in to
+                additional content. This content is a little bit longer.
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-5 col-sm-10">
+        <a href="https://example.com" target="_blank" class="card-link">
+          <div class="card">
+            <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/041.webp" class="card-img-top" alt="Hollywood Sign on The Hill" />
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">
+                This is a longer card with supporting text below as a natural lead-in to
+                additional content. This content is a little bit longer.
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-5 col-sm-10">
+        <a href="https://example.com" target="_blank" class="card-link">
+          <div class="card">
+            <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/041.webp" class="card-img-top" alt="Hollywood Sign on The Hill" />
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">
+                This is a longer card with supporting text below as a natural lead-in to
+                additional content. This content is a little bit longer.
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
 
 
 <script> 
+//ajust a timer 
+document.addEventListener('DOMContentLoaded', timeRefreching() );
+
+function timeRefreching() {
+    const seatTimers = document.querySelectorAll('.seat-timer');
+    const countdownDuration = 10 * 60 * 1000; // 10 minutes in milliseconds
+
+    seatTimers.forEach(timerDiv => {
+        const reservationTime = new Date(timerDiv.getAttribute('data-reservation-time'));
+        const seatNumber = timerDiv.getAttribute('data-seat-number');
+        const timerSpan = timerDiv.querySelector('.timer');
+
+        function updateTimer() {
+            const now = new Date();
+            const elapsedTime = now - reservationTime; // Time elapsed since reservation
+            const remainingTime = countdownDuration - elapsedTime;
+
+            if (remainingTime <= 0) {
+                timerSpan.textContent = "Time expired!";
+                return;
+            }
+
+            const minutes = Math.floor(remainingTime / (1000 * 60));
+            const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+            timerSpan.textContent = `Rest : ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        // Adjust for timezone difference (if needed)
+        const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000; // Local offset in milliseconds
+        reservationTime.setTime(reservationTime.getTime() - timezoneOffset);
+
+        // Start the countdown
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    });
+}
+        
+
     function confirmReservation(seatId, button) {
+        
         // Show confirmation dialog
         const buttonText = button.textContent || button.innerText;
         //if the button(seat) is reserved  
@@ -133,22 +282,66 @@
                 event.stopImmediatePropagation();//block the event 
 
             } else {// if the seat is available it gonna ask the user if he want to reserve it 
-                const confirmAction = confirm("Voulez-vous vraiment réserver ce siège?");
-                if (!confirmAction) {
+                
+                if(button.classList.contains('reservedpending')){ //if seat is reserved by the current user 
+                    const confirmAction = confirm("Voulez-vous vraiment laisser ce siège?");
+                    
+                    if (!confirmAction) {
                     //block the event if the user click No 
                     event.preventDefault();
                     event.stopImmediatePropagation();
+                    
+                    }
+                }else{
+                    //if seat are available 
+                    const confirmAction = confirm("Voulez-vous vraiment réserver ce siège?");
+                    
+                    if (!confirmAction) {
+                    //block the event if the user click No 
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                   
+                    }
                 }
+
+            
             }
 
-            }
-        
+        }
 
-        
+
     }
 </script>
 
 <style>
+/* card */
+/* remove the underline from links card */
+.card-link {
+  text-decoration: none; /* Remove underline from the link */
+  color: inherit; /* Inherit text color */
+}
+
+.card-link:hover .card {
+  transform: scale(1.02); /* Optional: add hover effect for better interactivity */
+  transition: transform 0.3s;
+}
+
+.card {
+  margin: 10px; /* Add spacing between cards */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add a shadow for better appearance */
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05); /* Hover effect */
+}
+
+.row {
+  gap: 20px; /* Add gap between rows and columns */
+}
+/* fin card */
+
+
 /* General container */
 .seat-reservation-container {
     

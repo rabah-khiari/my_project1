@@ -1,7 +1,8 @@
 @extends('base')
 @section('title','index one')
 @section('content')
- <livewire:seat-reservation />
+ <livewire:seat-reservation :spectacleid="$spectacletId" />
+ 
 @endsection
 
 @section('test')

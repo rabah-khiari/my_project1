@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Spectacle extends Model
 {
+    protected $primaryKey = 'id_spectacle';
     use HasFactory;
-    protected $fillable = ['name','description','total_seats','state','date'];
+    protected $fillable = ['name','description','total_seats','state','date','image'];
     
     public function seats()
     {

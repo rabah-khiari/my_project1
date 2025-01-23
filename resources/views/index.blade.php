@@ -1,9 +1,9 @@
 @extends('base')
 @section('title','index one')
 @section('content')
- <livewire:seat-reservation />
- 
-    <h1>c'est index blog bnjr</h1>
+{{-- live wire   --}}
+ <livewire:seat-reservation :spectacleid="$spectacletId" /> 
+    {{-- <h1>c'est index blog bnjr</h1>
     <a href="{{ route('blog.create')}}">create</a>
         {{"bonjoooooooooorzaaa"}}
     @foreach($posts as $post)
@@ -21,7 +21,7 @@
         
     @endforeach
     
-    {{$posts->links()}}
+    {{$posts->links()}} --}}
 @endsection
 
 @section('test')

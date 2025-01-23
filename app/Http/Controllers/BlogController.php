@@ -65,9 +65,9 @@ class BlogController extends Controller
             'email'=>'rabah@gmail.com',
         'password'=>Hash::make('0000') ]);
         */
-       
-        $var= \App\Models\Post::with('tags','category')->paginate(3);
-       return view('index', ['posts'=>$var]); 
+       //dd($idd);
+        //$var= \App\Models\Post::with('tags','category')->paginate(3);
+       return view('index');
 
     }
 
@@ -78,8 +78,8 @@ class BlogController extends Controller
             'tags'=>Tag::select('id','name')->get()]);
 
     }
-    public function seats()  {
-        return view('seats');
+    public function seats($id)  {
+        return view('seats', ['spectacletId' => $id]);
 
     }
     public function edit(Post $post) {
